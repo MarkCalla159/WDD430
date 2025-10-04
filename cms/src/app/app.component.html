@@ -6,8 +6,13 @@
 <!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
 <!-- * * * * * * * to get started with your project! * * * * * * * -->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<cms-header></cms-header>
-<cms-contacts></cms-contacts>
+<cms-header (selectedFeatureEvent)="switchView($event)"></cms-header>
+
+<div class="container">
+  <cms-documents *ngIf="selectedFeature === 'documents'"></cms-documents>
+  <cms-messages *ngIf="selectedFeature === 'messages'"></cms-messages>
+  <cms-contacts *ngIf="selectedFeature === 'contacts'"></cms-contacts>
+</div>
 
 <style>
   :host {

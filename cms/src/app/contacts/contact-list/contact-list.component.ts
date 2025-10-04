@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Contact } from '../contact.model';
 
 @Component({
@@ -8,6 +8,7 @@ import { Contact } from '../contact.model';
   styleUrl: './contact-list.component.css',
 })
 export class ContactListComponent {
+  @Output() selectedContactEvent = new EventEmitter<Contact>();
   contacts: Contact[] = [
     new Contact(
       '1',
@@ -26,4 +27,8 @@ export class ContactListComponent {
       null
     ),
   ];
+  onContactSelected(contact: Contact) {
+    console.log("contact-list.ts: onContactSelected: " + contact.name);
+    this.selectedContactEvent.emit(contact);
+  }
 }

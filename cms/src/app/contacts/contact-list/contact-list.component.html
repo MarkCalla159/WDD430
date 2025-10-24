@@ -9,6 +9,7 @@
       href="#"
       class="btn btn-success pull-right btn-sm"
       style="position: absolute; right: 30px; top: 30px"
+      [routerLink]="['new']"
     >
       New Contact
     </a>
@@ -17,7 +18,7 @@
         <cms-contact-item
           *ngFor="let contactEl of contacts"
           [contact]="contactEl"
-          (contactSelected)="onSelected(contactEl)">
+          >
         </cms-contact-item>
       </div>
     </div>

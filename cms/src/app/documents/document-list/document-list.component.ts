@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Document } from '../document.model';
 import { DocumentService } from '../document.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'cms-document-list',
@@ -11,14 +12,18 @@ import { DocumentService } from '../document.service';
 export class DocumentListComponent {
   //@Output() selectedDocumentEvent = new EventEmitter<Document>();
   documents: Document[] = [];
+  private subscription!: Subscription;
   constructor(private documentService: DocumentService) {}
 
   ngOnInit() {
     this.documents = this.documentService.getDocuments();
-    this.documentService.documentListChangedEvent.subscribe(
+    this.subscription = this.documentService.documentListChangedEvent.subscribe(
       (documents: Document[]) => {
         this.documents = documents;
       }
     );
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

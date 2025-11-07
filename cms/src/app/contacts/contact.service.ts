@@ -12,6 +12,7 @@ export class ContactService {
 
   contacts: Contact[] = [];
   maxContactId: number;
+  
   constructor() {
     this.contacts = MOCKCONTACTS;
     this.maxContactId = this.getMaxId();

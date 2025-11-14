@@ -12,17 +12,22 @@ import { Subscription } from 'rxjs';
 export class ContactListComponent {
   //@Output() selectedContactEvent = new EventEmitter<Contact>();
   contacts: Contact[] = [];
+  term: string = '';
+
   private subscription!: Subscription;
 
   constructor(private contactService: ContactService) {}
 
   ngOnInit(): void {
-    this.contacts = this.contactService.getContacts();
-    this.subscription = this.contactService.contactChangedEvent.subscribe((contacts: Contact[]) => {
+    this.contactService.getContacts();
+    this.subscription = this.contactService.contactListChangedEvent.subscribe((contacts: Contact[]) => {
       this.contacts = contacts;
     });
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+  search(value: string) {
+    this.term = value;
   }
 }

@@ -1,31 +1,33 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <div class="panel-title">
-      <h3>Contacts</h3>
+    <div class="row">
+      <span class="title pad-left-right">Contacts</span>
+    </div>
+
+    <div class="row">
+      <div class="input-group pull-left pad-left-right col-xs-7">
+
+        <input type="text" #searchBox class="form-control" placeholder="Enter a search value"
+          (keyup)="search(searchBox.value)" />
+
+        <div class="glyphicon glyphicon-search input-group-addon" (click)="search(searchBox.value)"></div>
+      </div>
+
+      <div class="pull-right pad-left-right">
+        <a class="btn btn-success" [routerLink]="['new']">New Contact</a>
+      </div>
     </div>
   </div>
 
   <div class="panel-body">
-    <a
-      href="#"
-      class="btn btn-success pull-right btn-sm"
-      style="position: absolute; right: 30px; top: 30px"
-      [routerLink]="['new']"
-    >
-      New Contact
-    </a>
     <div class="row">
       <div class="col-xs-12">
-        <div
-          *ngFor="let contactEl of contacts"
-          cdkDrag
-          [cdkDragData]="contactEl"
-          [cdkDragDisabled]="false"
-          [routerLink]="[contactEl.id]"
-          class="mb-2 d-block"
-        >
+
+        <div *ngFor="let contactEl of contacts | contactsFilter: term" cdkDrag [cdkDragData]="contactEl"
+          [cdkDragDisabled]="false" [routerLink]="[contactEl.id]" class="mb-2 d-block">
           <cms-contact-item [contact]="contactEl"></cms-contact-item>
         </div>
+
       </div>
     </div>
   </div>

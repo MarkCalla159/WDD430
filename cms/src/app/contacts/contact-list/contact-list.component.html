@@ -4,6 +4,7 @@
       <h3>Contacts</h3>
     </div>
   </div>
+
   <div class="panel-body">
     <a
       href="#"
@@ -15,11 +16,16 @@
     </a>
     <div class="row">
       <div class="col-xs-12">
-        <cms-contact-item
+        <div
           *ngFor="let contactEl of contacts"
-          [contact]="contactEl"
-          >
-        </cms-contact-item>
+          cdkDrag
+          [cdkDragData]="contactEl"
+          [cdkDragDisabled]="false"
+          [routerLink]="[contactEl.id]"
+          class="mb-2 d-block"
+        >
+          <cms-contact-item [contact]="contactEl"></cms-contact-item>
+        </div>
       </div>
     </div>
   </div>

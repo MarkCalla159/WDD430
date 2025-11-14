@@ -27,6 +27,7 @@ export class ContactEditComponent implements OnInit {
   id: string | null = null;
   selectedContactId: string = '';
   availableContacts: Contact[] = [];
+  invalidGroupContact = false;
 
   constructor(
     private contactService: ContactService,
@@ -81,7 +82,7 @@ export class ContactEditComponent implements OnInit {
     this.router.navigate(['/contacts']);
   }
 
-  onAddContactToGroup() {
+  /*onAddContactToGroup() {
     if (!this.selectedContactId) return;
     const newContact = this.contactService.getContact(this.selectedContactId);
     if (!newContact) return;
@@ -90,24 +91,23 @@ export class ContactEditComponent implements OnInit {
 
     this.groupContacts.push(newContact);
     this.selectedContactId = '';
-  }
+  }*/
   onRemoveItem(index: number): void {
     if (index < 0 || index >= this.groupContacts.length) return;
     this.groupContacts.splice(index, 1);
   }
-  onRemoveContactFromGroup(index: number) {
-    if (index < 0 || index >= this.groupContacts.length) return;
-    this.groupContacts.splice(index, 1);
-  }
+  
   addToGroup(event: CdkDragDrop<Contact[]>): void {
     const selectedContact = event.item.data as Contact;
     if (this.isInvalidContact(selectedContact)) {
-      alert('This contact is already in the group or invalid.');
+      this.invalidGroupContact = true;
+      setTimeout(() => (this.invalidGroupContact = false), 3000);
       return;
     }
+    this.invalidGroupContact = false;
     this.groupContacts.push(selectedContact);
   }
-  private isInvalidContact(newContact: Contact): boolean {
+ isInvalidContact(newContact: Contact): boolean {
     if (!newContact) return true;
     if (this.contact && newContact.id === this.contact.id) return true;
     return this.groupContacts.some(contact => contact.id === newContact.id);

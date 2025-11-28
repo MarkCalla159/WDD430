@@ -11,25 +11,30 @@ export class DocumentService {
   documentListChangedEvent = new Subject<Document[]>();
   private documents: Document[] = [];
   maxDocumentId: number = 0;
-  firebaseUrl = 'https://wdd430-mc-default-rtdb.firebaseio.com/documents.json';
-
+  firebaseUrl = 'http://localhost:3000/api/documents';
+  //'https://wdd430-mc-default-rtdb.firebaseio.com/documents.json';
   constructor(private http: HttpClient) {}
+  // -----------------------------------------------------------
+  // GetFuntions
+  // -----------------------------------------------------------
   getDocuments() {
-    this.http.get<Document[] | null>(this.firebaseUrl).subscribe({
-      next: (documents) => {
-        this.documents = documents ?? [];
-        this.maxDocumentId = this.getMaxId();
+    this.http
+      .get<{ message: string; documents: Document[] }>(this.firebaseUrl)
+      .subscribe({
+        next: (response) => {
+          this.documents = response.documents ?? [];
+          this.maxDocumentId = this.getMaxId();
 
-        this.documents.sort((a, b) =>
-          a.name < b.name ? -1 : a.name > b.name ? 1 : 0
-        );
+          this.documents.sort((a, b) =>
+            a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+          );
 
-        this.documentListChangedEvent.next(this.documents.slice());
-      },
-      error: (err) => {
-        console.error('Error fetching documents:', err);
-      },
-    });
+          this.documentListChangedEvent.next(this.documents.slice());
+        },
+        error: (err) => {
+          console.error('Error fetching documents:', err);
+        },
+      });
   }
 
   getDocument(id: string): Document | null {
@@ -49,7 +54,7 @@ export class DocumentService {
   // ---------------------------------------------------------------------
   // storeDocuments (HTTP PUT)
   // ---------------------------------------------------------------------
-  storeDocuments(){
+  /*storeDocuments(){
     const json = JSON.stringify(this.documents);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
@@ -57,7 +62,7 @@ export class DocumentService {
       .subscribe(() => {
         this.documentListChangedEvent.next(this.documents.slice());
       });
-  }
+  }*/
 
   // -----------------------------------------------------------
   // AddDocument
@@ -66,12 +71,22 @@ export class DocumentService {
     if (!newDocument) {
       return;
     }
-    this.maxDocumentId++;
-    newDocument.id = this.maxDocumentId.toString();
-    this.documents.push(newDocument);
-    //const documentsListClone = this.documents.slice();
-    //this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments();
+    newDocument.id = '';
+
+    this.http
+      .post<{ message: string; document: Document }>(
+        this.firebaseUrl,
+        newDocument
+      )
+      .subscribe({
+        next: (response) => {
+          this.documents.push(response.document);
+          this.sortAndSend();
+        },
+        error: (err) => {
+          console.error('Error adding document:', err);
+        },
+      });
   }
   // -----------------------------------------------------------
   // UpdateDocument
@@ -85,11 +100,23 @@ export class DocumentService {
       return;
     }
     newDocument.id = originalDocument.id; //Keep the original id
-    this.documents[pos] = newDocument;
+    //newDocument._id = originalDocument._id;
+    delete (newDocument as any)._id;
 
-    //const documentsListClone = this.documents.slice();
-    //this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments();
+    this.http
+      .put<{ message: string }>(
+        `${this.firebaseUrl}/${originalDocument.id}`,
+        newDocument
+      )
+      .subscribe({
+        next: () => {
+          this.documents[pos] = newDocument;
+          this.sortAndSend();
+        },
+        error: (err) => {
+          console.error('Error updating document:', err);
+        },
+      });
   }
   // -----------------------------------------------------------
   // DeleteDocument
@@ -103,9 +130,25 @@ export class DocumentService {
     if (pos < 0) {
       return;
     }
-    this.documents.splice(pos, 1);
-    //const documentsListClone = this.documents.slice();
-    //this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments();
+    this.http
+      .delete<{ message: string }>(`${this.firebaseUrl}/${document.id}`)
+      .subscribe({
+        next: () => {
+          this.documents.splice(pos, 1);
+          this.sortAndSend();
+        },
+        error: (err) => {
+          console.error('Error deleting document:', err);
+        },
+      });
+  }
+  // -----------------------------------------------------------
+  // SortAndSend
+  // -----------------------------------------------------------
+  private sortAndSend() {
+    this.documents.sort((a, b) =>
+      a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+    );
+    this.documentListChangedEvent.next(this.documents.slice());
   }
 }

@@ -1,0 +1,11 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3>Books</h3>
+  </div>
+
+  <div class="panel-body">
+    <div *ngFor="let book of books">
+      <strong>{{ book.title }}</strong> – {{ book.author }}
+    </div>
+  </div>
+</div>

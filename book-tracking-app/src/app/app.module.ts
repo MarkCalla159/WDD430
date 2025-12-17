@@ -7,6 +7,7 @@ import { HeaderComponent } from './header.component';
 import { BooksComponent } from './books/books.component';
 import { MessagesComponent } from './messages/messages.component';
 import { AuthorsComponent } from './authors/authors.component';
+import { BookListComponent } from './books/book-list/book-list.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { AuthorsComponent } from './authors/authors.component';
     HeaderComponent,
     BooksComponent,
     MessagesComponent,
-    AuthorsComponent
+    AuthorsComponent,
+    BookListComponent
   ],
   imports: [
     BrowserModule,
